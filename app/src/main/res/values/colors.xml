@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary">#263238</color>
+    <color name="color_primary_dark">#1A2327</color>
+    <color name="color_window_background">#303030</color>
+    <color name="color_accent">#00E5FF</color>
+    <color name="color_accent_dark">#00B8D4</color>
+    <color name="color_white">#fff</color>
+    <color name="color_black">#222</color>
+    <color name="color_black_ripple">#333</color>
+    <color name="color_black_pressed">#666</color>
+</resources>

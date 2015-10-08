@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                tools:context="com.rm.darya.ui.SearchActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/darya_title_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.DarkMatter.Toolbar"
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/darya_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/color_primary"
+            android:theme="@style/AppTheme.DarkMatter.Toolbar"
+            app:popupTheme="@style/AppTheme.DarkMatter.Toolbar"
+            />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/darya_title_layout"
+        />
+
+    <include
+        layout="@layout/view_no_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginTop="4dp">
+
+    <!--<ImageView-->
+        <!--android:id="@+id/currency_icon"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:padding="6dp"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:src="@drawable/ic_turkey"-->
+        <!--android:background="@drawable/unselected_currency_bg"-->
+        <!--tools:ignore="ContentDescription"/>-->
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/currency_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:theme="@style/AppTheme.DarkMatter">
+
+        <EditText
+            android:id="@+id/currency_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:inputType="numberDecimal"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+
+</RelativeLayout>
