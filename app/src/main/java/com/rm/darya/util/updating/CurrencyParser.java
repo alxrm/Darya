@@ -22,6 +22,7 @@ public class CurrencyParser {
     private static final String TAG_RATE = "rate";
     private static final String TAG_SUB_RATE = "Rate";
     private static final String TAG_SUB_NAME = "Name";
+    private static final String NOT_AVAILABLE = "N/A";
 
     private static ArrayList<Currency> sResultCurrencies;
 
@@ -58,7 +59,7 @@ public class CurrencyParser {
             if (name.equals(TAG_RATE)) {
 
                 Currency c = parseCurrency(parser);
-                sResultCurrencies.add(c);
+                if (null != c) sResultCurrencies.add(c);
 
             } else {
                 skipTag(parser);
@@ -80,11 +81,22 @@ public class CurrencyParser {
             switch (name) {
                 case TAG_SUB_NAME:
                     String code = getCode(parser).substring(0, 3);
-                    item.setCode(code);
-                    break;
+                    if (code.equals(NOT_AVAILABLE)) {
+                        return null;
+                    }
+                    else {
+                        item.setCode(code);
+                        break;
+                    }
                 case TAG_SUB_RATE:
-                    item.setRate(getRate(parser));
-                    break;
+                    String rate = getRate(parser);
+                    if (rate.equals(NOT_AVAILABLE)) {
+                        return null;
+                    }
+                    else {
+                        item.setRate(Float.parseFloat(rate));
+                        break;
+                    }
                 default:
                     skipTag(parser);
                     break;
@@ -93,7 +105,7 @@ public class CurrencyParser {
         return item;
     }
 
-    private static float getRate(XmlPullParser parser)
+    private static String getRate(XmlPullParser parser)
             throws IOException, XmlPullParserException {
 
         parser.require(XmlPullParser.START_TAG, null, TAG_SUB_RATE);
@@ -102,7 +114,8 @@ public class CurrencyParser {
 
         Log.d("CurrencyParser", "getRate - rate: "
                 + rate);
-        return Float.parseFloat(rate);
+
+        return rate;
     }
 
     private static String getCode(XmlPullParser parser)

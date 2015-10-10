@@ -1,7 +1,7 @@
 package com.rm.darya.events.typing;
 
 import com.rm.darya.model.Currency;
-import com.rm.darya.util.CurrenciesUtil;
+import com.rm.darya.util.CurrencyUtils;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ public class TypingEvent {
         for (int i = 0; i < mCurrencies.size(); i++) {
 
             String result =
-                    CurrenciesUtil.getCalculatedResult(data, mCurrencies.get(i), currency);
+                    CurrencyUtils.Parser.getCalculatedResult(data, mCurrencies.get(i), currency);
 
             mCurrencies.get(i).setValue(result);
         }

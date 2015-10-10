@@ -2,117 +2,54 @@ package com.rm.darya.util;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.rm.darya.R;
 import com.rm.darya.model.Currency;
 import com.rm.darya.util.updating.Currencies;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 /**
  * Created by alex
  */
 public final class CurrenciesUtil {
 
-    public static final String FLOAT_PATTERN = "^[0-9]+(\\.?[0-9]*)?$";
-//    public static final String STATE_PREFIX = "state_";
-
-    private static final DecimalFormatSymbols sDecimalSymbols =
-            new DecimalFormatSymbols();
-    private static final DecimalFormat sDecimalFormat =
-            new DecimalFormat();
-
+//    public static final String FLOAT_PATTERN = "^[0-9]+(\\.?[0-9]*)?$";
+//
+//    private static final DecimalFormatSymbols sDecimalSymbols =
+//            new DecimalFormatSymbols();
+//    private static final DecimalFormat sDecimalFormat =
+//            new DecimalFormat();
+//
     private static final int SELECTED = Color.parseColor("#ff00E5FF");
     private static final int UNSELECTED_ICON = Color.parseColor("#ffefefef");
     private static final int BG_UNSELECTED = R.drawable.unselected_currency_bg;
 
-    static {
-        sDecimalSymbols.setDecimalSeparator('.');
-        sDecimalSymbols.setGroupingSeparator(',');
-
-        sDecimalFormat.setGroupingSize(3);
-        sDecimalFormat.applyPattern("#,##0.##");
-        sDecimalFormat.setDecimalFormatSymbols(sDecimalSymbols);
-    }
-
-    private CurrenciesUtil() {}
-
-    public static String getCalculatedResult(String inputtingData,
-                                             Currency countable, Currency inputting) {
-
-        inputtingData = prepare(inputtingData);
-
-        if (!inputtingData.matches(FLOAT_PATTERN)) return inputtingData;
-
-        float value = Float.parseFloat(inputtingData);
-        float resulting = value * (inputting.getRate() / countable.getRate());
-
-        return sDecimalFormat.format(resulting);
-    }
-
-    public static String prepare(String inp) {
-        return TextUtils.isEmpty(inp) ? inp : inp.replaceAll(",", "");
-    }
+//    static {
+//        sDecimalSymbols.setDecimalSeparator('.');
+//        sDecimalSymbols.setGroupingSeparator(',');
 //
-//    public static void saveCurrencies(ArrayList<Currency> currencies) {
-//
-//        for (Currency c : currencies)
-//            Prefs.put(c.getCode(), c.getRate());
+//        sDecimalFormat.setGroupingSize(3);
+//        sDecimalFormat.applyPattern("#,##0.##");
+//        sDecimalFormat.setDecimalFormatSymbols(sDecimalSymbols);
 //    }
 //
-//    @SuppressWarnings("ConstantConditions")
-//    public static ArrayList<Currency> getSavedCurrencies() {
+//    private CurrenciesUtil() {}
 //
-//        ArrayList<Currency> saved = new ArrayList<>();
+//    public static String getCalculatedResult(String inputtingData,
+//                                             Currency countable, Currency inputting) {
 //
-//        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
+//        inputtingData = prepare(inputtingData);
 //
-//            String code = Currencies.CURRENCIES.keyAt(i);
-//            String name = Currencies.CURRENCIES.valueAt(i);
+//        if (!inputtingData.matches(FLOAT_PATTERN)) return inputtingData;
 //
-//            if (!Prefs.get().getBoolean(STATE_PREFIX + code, false)) continue;
+//        float value = Float.parseFloat(inputtingData);
+//        float resulting = value * (inputting.getRate() / countable.getRate());
 //
-//            Currency c = new Currency();
-//            c.setCode(code);
-//            c.setName(name);
-//            c.setRate(Prefs.get().getFloat(code, 0));
-//
-//            saved.add(c);
-//        }
-//
-//        return saved;
+//        return sDecimalFormat.format(resulting);
 //    }
 //
-//    public static ArrayList<Pair<Currency, Boolean>> getAllCurrencies() {
-//        ArrayList<Pair<Currency, Boolean>> result = new ArrayList<>();
-//
-//        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
-//
-//            String code = Currencies.CURRENCIES.keyAt(i);
-//            String name = Currencies.CURRENCIES.valueAt(i);
-//
-//            boolean selection = Prefs.get().getBoolean(STATE_PREFIX + code, false);
-//
-//            Currency currency = new Currency();
-//            currency.setName(name);
-//            currency.setCode(code);
-//            currency.setRate(Prefs.get().getFloat(code, 0));
-//
-//            result.add(Pair.create(currency, selection));
-//        }
-//
-//        Collections.sort(result, new Comparator<Pair<Currency, Boolean>>() {
-//            @Override
-//            public int compare(Pair<Currency, Boolean> lhs, Pair<Currency, Boolean> rhs) {
-//                return lhs.getFirst().compareTo(rhs.getFirst());
-//            }
-//        });
-//
-//
-//        return result;
+//    public static String prepare(String inp) {
+//        return TextUtils.isEmpty(inp) ? inp : inp.replaceAll(",", "");
 //    }
 
     public static void setIcon(ImageView v, Currency c) {

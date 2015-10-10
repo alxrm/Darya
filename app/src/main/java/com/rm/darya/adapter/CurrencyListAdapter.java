@@ -16,8 +16,8 @@ import com.rm.darya.events.typing.TypingEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.rm.darya.util.CurrenciesUtil.FLOAT_PATTERN;
-import static com.rm.darya.util.CurrenciesUtil.prepare;
+import static com.rm.darya.util.CurrencyUtils.Parser.FLOAT_PATTERN;
+import static com.rm.darya.util.CurrencyUtils.Parser.prepare;
 
 /**
  * Created by alex
