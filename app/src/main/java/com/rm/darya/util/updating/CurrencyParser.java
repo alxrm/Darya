@@ -80,9 +80,7 @@ public class CurrencyParser {
             switch (name) {
                 case TAG_SUB_NAME:
                     String code = getCode(parser).substring(0, 3);
-
                     item.setCode(code);
-                    item.setName(Currencies.CURRENCIES.get(code));
                     break;
                 case TAG_SUB_RATE:
                     item.setRate(getRate(parser));

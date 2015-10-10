@@ -6,20 +6,14 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.rm.darya.events.OnParseResultListener;
-import com.rm.darya.model.Currency;
 import com.rm.darya.util.Connectivity;
-import com.rm.darya.util.CurrenciesUtil;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.TimeUtil;
-
-import java.util.ArrayList;
 
 /**
  * Created by alex
  */
 public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParseResultListener {
-
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -28,7 +22,7 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParse
         Connectivity.init(context);
 
         CurrencyUpdateTask updateTask =
-                new CurrencyUpdateTask(CurrenciesUtil.getSavedCurrencies(), this);
+                new CurrencyUpdateTask(this);
 
         if (Prefs.getSavedToday() == TimeUtil.getToday()) return;
 
@@ -59,10 +53,9 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParse
     }
 
     @Override
-    public void onParseSuccessful(ArrayList<Currency> currencies) {
+    public void onParseSuccessful() {
         Log.d("CurrencyUpdateReceiver", "onParseSuccessful");
         Prefs.saveToday();
-        CurrenciesUtil.saveCurrencies(currencies);
     }
 
     @Override

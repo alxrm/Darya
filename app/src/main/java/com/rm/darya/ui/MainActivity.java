@@ -9,16 +9,13 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.rm.darya.events.OnInteractionListener;
 import com.rm.darya.R;
+import com.rm.darya.events.OnInteractionListener;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.base.BaseActivity;
-import com.rm.darya.util.KeyBoardUtil;
 
 import java.util.ArrayList;
 
-import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
-import static android.support.v4.view.ViewPager.SCROLL_STATE_SETTLING;
 import static com.rm.darya.util.Prefs.KEY_AUTO_UPDATE;
 import static com.rm.darya.util.Prefs.KEY_UPDATE_WHEN_ROAMING;
 
@@ -31,7 +28,6 @@ public class MainActivity extends BaseActivity implements OnInteractionListener 
 
     private ConverterFragment mConverterFragment;
     private SettingsFragment mSettingsFragment;
-    private int mState = SCROLL_STATE_IDLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,26 +43,6 @@ public class MainActivity extends BaseActivity implements OnInteractionListener 
         mSettingsFragment = new SettingsFragment();
 
         mContentPager = (ViewPager) findViewById(R.id.darya_content_viewpager);
-        mContentPager.addOnPageChangeListener(
-
-                new TabLayout.TabLayoutOnPageChangeListener(mPagerTabs) {
-                    @SuppressWarnings("ConstantConditions")
-                    @Override
-                    public void onPageSelected(int position) {
-                        super.onPageSelected(position);
-                        mPagerTabs.getTabAt(position).select();
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-                        super.onPageScrollStateChanged(state);
-                        if (state == SCROLL_STATE_IDLE && mState == SCROLL_STATE_SETTLING)
-                            KeyBoardUtil.hide(MainActivity.this);
-
-                        mState = state;
-                    }
-                }
-        );
         mContentPager.addOnPageChangeListener(mSettingsFragment);
         mContentPager.addOnPageChangeListener(mConverterFragment);
         mSettingsFragment.setOnProjectionChangeListener(mConverterFragment);

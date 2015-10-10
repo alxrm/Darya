@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.rm.darya.R;
 import com.rm.darya.model.Currency;
 import com.rm.darya.util.CurrenciesUtil;
-import com.rm.darya.model.Pair;
 import com.rm.darya.util.Dimen;
 
 import java.util.ArrayList;
@@ -27,9 +26,9 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
 
     private OnItemSelectedListener mListener;
     private boolean mHasHeaders;
-    private ArrayList<Pair<Currency, Boolean>> mStatesMap = new ArrayList<>();
+    private ArrayList<Currency> mCurrencies = new ArrayList<>();
 
-    public ChooserListAdapter(ArrayList<Pair<Currency, Boolean>> states, boolean hasHeaders) {
+    public ChooserListAdapter(ArrayList<Currency> states, boolean hasHeaders) {
         mHasHeaders = hasHeaders;
         updateDataSet(states);
     }
@@ -52,10 +51,10 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Currency currency = mStatesMap.get(position).getFirst();
+        Currency currency = mCurrencies.get(position);
         String name = currency.getName();
         String code = currency.getCode();
-        boolean checked = mStatesMap.get(position).getSecond();
+        boolean checked = currency.isSelected();
 
         holder.itemView.setPadding(
                 Dimen.dp(mHasHeaders ? 56 : 8),
@@ -72,17 +71,17 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
 
     @Override
     public int getItemCount() {
-        return mStatesMap.size();
+        return mCurrencies.size();
     }
 
-    public void updateDataSet(ArrayList<Pair<Currency, Boolean>> choosable) {
-        mStatesMap = choosable;
+    public void updateDataSet(ArrayList<Currency> choosable) {
+        mCurrencies = choosable;
         notifyDataSetChanged();
     }
 
     @Override
     public long getItemId(int position) {
-        return mStatesMap.get(position).hashCode();
+        return mCurrencies.get(position).hashCode();
     }
 
     public void setOnItemSelectedListener(OnItemSelectedListener listener) {

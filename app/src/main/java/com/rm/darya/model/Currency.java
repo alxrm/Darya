@@ -62,6 +62,11 @@ public class Currency implements Comparable<Currency> {
     }
 
     @Override
+    public String toString() {
+        return "Currency: " + "code: " + mCode + " rate: " + mRate + " selection: " + mSelected;
+    }
+
+    @Override
     public int compareTo(@NonNull Currency another) {
         return getName().compareTo(another.getName());
     }

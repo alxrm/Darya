@@ -16,22 +16,22 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
-import com.rm.darya.adapter.ChooserListAdapter;
-import com.rm.darya.events.OnInteractionListener;
-import com.rm.darya.events.OnProjectionChangeListener;
 import com.rm.darya.R;
-import com.rm.darya.model.Currency;
+import com.rm.darya.adapter.ChooserListAdapter;
 import com.rm.darya.adapter.LetterHeaderAdapter;
 import com.rm.darya.events.HidingScrollListener;
-import com.rm.darya.model.Pair;
-import com.rm.darya.util.Prefs;
+import com.rm.darya.events.OnInteractionListener;
+import com.rm.darya.events.OnProjectionChangeListener;
+import com.rm.darya.model.Currency;
+import com.rm.darya.util.CurrencyUtils;
+import com.rm.darya.util.KeyBoardUtil;
 import com.rm.darya.util.base.BaseFragment;
 
 import java.util.ArrayList;
 
+import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
+import static android.support.v4.view.ViewPager.SCROLL_STATE_SETTLING;
 import static com.rm.darya.ui.MainActivity.ID_SETTINGS;
-import static com.rm.darya.util.CurrenciesUtil.STATE_PREFIX;
-import static com.rm.darya.util.CurrenciesUtil.getAllCurrencies;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,12 +39,13 @@ import static com.rm.darya.util.CurrenciesUtil.getAllCurrencies;
 public class SettingsFragment extends BaseFragment
         implements ChooserListAdapter.OnItemSelectedListener {
 
-    private ArrayList<Pair<Currency, Boolean>> mChoosable;
+    private ArrayList<Currency> mChoosable;
     private ChooserListAdapter mCurrencyAdapter;
     private OnProjectionChangeListener mProjectionListener;
     private FloatingActionButton mSearchFab;
     private OnInteractionListener mListener;
     private StickyHeadersItemDecoration mLetterStickyHeader;
+    private int mState = SCROLL_STATE_IDLE;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -67,7 +68,7 @@ public class SettingsFragment extends BaseFragment
     public void onViewCreated(View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mChoosable = getAllCurrencies();
+        mChoosable = CurrencyUtils.getAllCurrencies();
         mCurrencyAdapter = new ChooserListAdapter(mChoosable, true);
         mCurrencyAdapter.setHasStableIds(true);
         mCurrencyAdapter.setOnItemSelectedListener(this);
@@ -108,9 +109,16 @@ public class SettingsFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
-        mChoosable = getAllCurrencies();
+        mChoosable = CurrencyUtils.getAllCurrencies();
         if (mCurrencyAdapter != null)
             mCurrencyAdapter.updateDataSet(mChoosable);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        if (state == SCROLL_STATE_IDLE && mState == SCROLL_STATE_SETTLING)
+            KeyBoardUtil.hide(getActivity());
+        mState = state;
     }
 
     @Override
@@ -147,13 +155,10 @@ public class SettingsFragment extends BaseFragment
 
     @Override
     public void onItemSelected(boolean isSelected, int position) {
-        mChoosable.get(position).setSecond(isSelected);
-        Prefs.put(STATE_PREFIX + mChoosable.get(position).getFirst().getCode(), isSelected);
-        ArrayList<Currency> currencies = new ArrayList<>();
+        Currency currency = mChoosable.get(position);
+        currency.setSelected(isSelected);
+        CurrencyUtils.selectCurrency(currency);
 
-        for (Pair<Currency, Boolean> p : mChoosable)
-            if (p.getSecond()) currencies.add(p.getFirst());
-
-        mProjectionListener.onProjectionChanged(currencies);
+        mProjectionListener.onProjectionChanged();
     }
 }

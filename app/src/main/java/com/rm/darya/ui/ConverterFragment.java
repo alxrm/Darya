@@ -12,16 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.rm.darya.adapter.CurrencyListAdapter;
-import com.rm.darya.events.OnProjectionChangeListener;
 import com.rm.darya.R;
+import com.rm.darya.adapter.CurrencyListAdapter;
+import com.rm.darya.events.OnParseResultListener;
+import com.rm.darya.events.OnProjectionChangeListener;
 import com.rm.darya.model.Currency;
 import com.rm.darya.util.Connectivity;
-import com.rm.darya.util.CurrenciesUtil;
+import com.rm.darya.util.CurrencyUtils;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.base.BaseFragment;
 import com.rm.darya.util.updating.CurrencyUpdateTask;
-import com.rm.darya.events.OnParseResultListener;
 
 import java.util.ArrayList;
 
@@ -57,13 +57,13 @@ public class ConverterFragment extends BaseFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
+        mEmptyView = (RelativeLayout) findViewById(R.id.empty_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.converter_refresh_layout);
         mCurrencyListView = (RecyclerView) findViewById(R.id.currency_list);
         mCurrencyListView.setVisibility(View.GONE);
-        mEmptyView = (RelativeLayout) findViewById(R.id.empty_view);
 
-        mCurrencies = CurrenciesUtil.getSavedCurrencies();
+        mCurrencies = CurrencyUtils.getSelectedCurrencies();
         mCurrencyAdapter = new CurrencyListAdapter(mCurrencies);
         mLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -86,7 +86,7 @@ public class ConverterFragment extends BaseFragment
     }
 
     void updateList() {
-        mCurrencies = CurrenciesUtil.getSavedCurrencies();
+        mCurrencies = CurrencyUtils.getSelectedCurrencies();
         if (mCurrencyAdapter != null) mCurrencyAdapter.updateDataSet(mCurrencies);
     }
 
@@ -139,7 +139,7 @@ public class ConverterFragment extends BaseFragment
             mRefreshLayout.setEnabled(true);
 
         } else {
-            mUpdateTask = new CurrencyUpdateTask(mCurrencies, this);
+            mUpdateTask = new CurrencyUpdateTask(this);
             mUpdateTask.execute();
         }
     }
@@ -151,16 +151,18 @@ public class ConverterFragment extends BaseFragment
     }
 
     @Override
-    public void onProjectionChanged(ArrayList<Currency> currencies) {
+    public void onProjectionChanged() {
         Log.d("ConverterFragment", "onProjectionChanged");
-        mCurrencies = currencies;
+        mCurrencies = CurrencyUtils.getSelectedCurrencies();
         mCurrencyAdapter.updateDataSet(mCurrencies);
         showListIsEmpty(mCurrencies.isEmpty());
     }
 
     //region Update task callbacks
     @Override
-    public void onParseSuccessful(ArrayList<Currency> currencies) {
+    public void onParseSuccessful() {
+
+        ArrayList<Currency> currencies = CurrencyUtils.getSelectedCurrencies();
 
         if (getActivity() != null) {
             Snackbar.make(mRootView, "Данные обновлены", Snackbar.LENGTH_LONG).show();
@@ -171,7 +173,6 @@ public class ConverterFragment extends BaseFragment
 //            mCurrencyListView.setAdapter(mCurrencyAdapter);
         }
 
-        CurrenciesUtil.saveCurrencies(currencies);
         Prefs.saveToday();
     }
 

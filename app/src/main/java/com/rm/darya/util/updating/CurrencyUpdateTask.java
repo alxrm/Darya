@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.rm.darya.events.OnParseResultListener;
 import com.rm.darya.model.Currency;
+import com.rm.darya.util.CurrencyUtils;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,9 +32,8 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
     private ArrayList<Currency> mProjection;
     private OnParseResultListener mListener;
 
-    public CurrencyUpdateTask(ArrayList<Currency> currenciesProjection,
-                              OnParseResultListener listener) {
-        mProjection = currenciesProjection;
+    public CurrencyUpdateTask(OnParseResultListener listener) {
+        mProjection = CurrencyUtils.getAllCurrencies();
         mListener = listener;
     }
 
@@ -53,7 +53,8 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
         super.onPostExecute(currencies);
 
         if (currencies != null) {
-            mListener.onParseSuccessful(currencies);
+            CurrencyUtils.pushRates(currencies);
+            mListener.onParseSuccessful();
         } else {
             mListener.onError();
         }

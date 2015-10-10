@@ -7,14 +7,10 @@ import android.widget.ImageView;
 
 import com.rm.darya.R;
 import com.rm.darya.model.Currency;
-import com.rm.darya.model.Pair;
 import com.rm.darya.util.updating.Currencies;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by alex
@@ -22,7 +18,7 @@ import java.util.Comparator;
 public final class CurrenciesUtil {
 
     public static final String FLOAT_PATTERN = "^[0-9]+(\\.?[0-9]*)?$";
-    public static final String STATE_PREFIX = "state_";
+//    public static final String STATE_PREFIX = "state_";
 
     private static final DecimalFormatSymbols sDecimalSymbols =
             new DecimalFormatSymbols();
@@ -60,64 +56,64 @@ public final class CurrenciesUtil {
     public static String prepare(String inp) {
         return TextUtils.isEmpty(inp) ? inp : inp.replaceAll(",", "");
     }
-
-    public static void saveCurrencies(ArrayList<Currency> currencies) {
-
-        for (Currency c : currencies)
-            Prefs.put(c.getCode(), c.getRate());
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public static ArrayList<Currency> getSavedCurrencies() {
-
-        ArrayList<Currency> saved = new ArrayList<>();
-
-        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
-
-            String code = Currencies.CURRENCIES.keyAt(i);
-            String name = Currencies.CURRENCIES.valueAt(i);
-
-            if (!Prefs.get().getBoolean(STATE_PREFIX + code, false)) continue;
-
-            Currency c = new Currency();
-            c.setCode(code);
-            c.setName(name);
-            c.setRate(Prefs.get().getFloat(code, 0));
-
-            saved.add(c);
-        }
-
-        return saved;
-    }
-
-    public static ArrayList<Pair<Currency, Boolean>> getAllCurrencies() {
-        ArrayList<Pair<Currency, Boolean>> result = new ArrayList<>();
-
-        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
-
-            String code = Currencies.CURRENCIES.keyAt(i);
-            String name = Currencies.CURRENCIES.valueAt(i);
-
-            boolean selection = Prefs.get().getBoolean(STATE_PREFIX + code, false);
-
-            Currency currency = new Currency();
-            currency.setName(name);
-            currency.setCode(code);
-            currency.setRate(Prefs.get().getFloat(code, 0));
-
-            result.add(Pair.create(currency, selection));
-        }
-
-        Collections.sort(result, new Comparator<Pair<Currency, Boolean>>() {
-            @Override
-            public int compare(Pair<Currency, Boolean> lhs, Pair<Currency, Boolean> rhs) {
-                return lhs.getFirst().compareTo(rhs.getFirst());
-            }
-        });
-
-
-        return result;
-    }
+//
+//    public static void saveCurrencies(ArrayList<Currency> currencies) {
+//
+//        for (Currency c : currencies)
+//            Prefs.put(c.getCode(), c.getRate());
+//    }
+//
+//    @SuppressWarnings("ConstantConditions")
+//    public static ArrayList<Currency> getSavedCurrencies() {
+//
+//        ArrayList<Currency> saved = new ArrayList<>();
+//
+//        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
+//
+//            String code = Currencies.CURRENCIES.keyAt(i);
+//            String name = Currencies.CURRENCIES.valueAt(i);
+//
+//            if (!Prefs.get().getBoolean(STATE_PREFIX + code, false)) continue;
+//
+//            Currency c = new Currency();
+//            c.setCode(code);
+//            c.setName(name);
+//            c.setRate(Prefs.get().getFloat(code, 0));
+//
+//            saved.add(c);
+//        }
+//
+//        return saved;
+//    }
+//
+//    public static ArrayList<Pair<Currency, Boolean>> getAllCurrencies() {
+//        ArrayList<Pair<Currency, Boolean>> result = new ArrayList<>();
+//
+//        for (int i = 0; i < Currencies.CURRENCIES.size(); i++) {
+//
+//            String code = Currencies.CURRENCIES.keyAt(i);
+//            String name = Currencies.CURRENCIES.valueAt(i);
+//
+//            boolean selection = Prefs.get().getBoolean(STATE_PREFIX + code, false);
+//
+//            Currency currency = new Currency();
+//            currency.setName(name);
+//            currency.setCode(code);
+//            currency.setRate(Prefs.get().getFloat(code, 0));
+//
+//            result.add(Pair.create(currency, selection));
+//        }
+//
+//        Collections.sort(result, new Comparator<Pair<Currency, Boolean>>() {
+//            @Override
+//            public int compare(Pair<Currency, Boolean> lhs, Pair<Currency, Boolean> rhs) {
+//                return lhs.getFirst().compareTo(rhs.getFirst());
+//            }
+//        });
+//
+//
+//        return result;
+//    }
 
     public static void setIcon(ImageView v, Currency c) {
 

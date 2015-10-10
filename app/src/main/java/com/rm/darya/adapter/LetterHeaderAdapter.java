@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.rm.darya.R;
 import com.rm.darya.model.Currency;
-import com.rm.darya.model.Pair;
 
 import java.util.ArrayList;
 
@@ -18,9 +17,9 @@ import java.util.ArrayList;
  */
 public class LetterHeaderAdapter implements StickyHeadersAdapter<LetterHeaderAdapter.ViewHolder> {
 
-    private ArrayList<Pair<Currency, Boolean>> items;
+    private ArrayList<Currency> items;
 
-    public LetterHeaderAdapter(ArrayList<Pair<Currency, Boolean>> items) {
+    public LetterHeaderAdapter(ArrayList<Currency> items) {
 
         this.items = items;
     }
@@ -37,7 +36,7 @@ public class LetterHeaderAdapter implements StickyHeadersAdapter<LetterHeaderAda
     @Override
     public void onBindViewHolder(ViewHolder headerViewHolder, int position) {
 
-        Currency currency = items.get(position).getFirst();
+        Currency currency = items.get(position);
 
         headerViewHolder.letter
                 .setText(currency.getName().subSequence(0, 1));
@@ -45,7 +44,7 @@ public class LetterHeaderAdapter implements StickyHeadersAdapter<LetterHeaderAda
 
     @Override
     public long getHeaderId(int position) {
-        return items.get(position).getFirst().getName().charAt(0);
+        return items.get(position).getName().charAt(0);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
