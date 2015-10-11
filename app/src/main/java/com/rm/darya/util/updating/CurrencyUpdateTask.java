@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import static com.rm.darya.util.CurrencyUtils.ExceptedCurrencies.isExceptedCode;
 
 /**
@@ -30,10 +32,6 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
     private static final String REQUEST_DB_SOURCE
             = "&env=store://datatables.org/alltableswithkeys";
 
-    // exception codes
-    private static final String ZWD_CODE = "ZWD";
-    private static final String EEK_CODE = "EEK";
-
     private ArrayList<Currency> mProjection;
     private OnParseResultListener mListener;
 
@@ -46,7 +44,9 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
     protected ArrayList<Currency> doInBackground(Void... params) {
 
         try {
-            return CurrencyParser.parseResponse(getRawData());
+            InputStream data = getRawData();
+            if (data == null) return null;
+            else return CurrencyParser.parseResponse(getRawData());
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
             return null;
@@ -69,9 +69,11 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
 
         URL url = getUrl();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
         conn.setRequestMethod("GET");
         conn.connect();
+
+        if (HttpsURLConnection.HTTP_OK != conn.getResponseCode())
+            return null;
 
         return conn.getInputStream();
     }

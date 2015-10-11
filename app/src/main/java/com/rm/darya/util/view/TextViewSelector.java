@@ -13,41 +13,11 @@ public class TextViewSelector {
     // TODO make it as a separated custom component
     private static final int SELECTED = Color.parseColor("#ff00E5FF");
     private static final int UNSELECTED_ICON = Color.parseColor("#ffefefef");
-
-//    public static void setIcon(ImageView v, Currency c) {
-//
-//        int currencyIcon;
-//
-//        switch (c.getCode()) {
-//            case Currencies.USD:
-//                currencyIcon = R.drawable.ic_dollar;
-//                break;
-//            case Currencies.EUR:
-//                currencyIcon = R.drawable.ic_euro;
-//                break;
-//            case Currencies.GBP:
-//                currencyIcon = R.drawable.ic_pound;
-//                break;
-//            case Currencies.RUB:
-//                currencyIcon = R.drawable.ic_ruble;
-//                break;
-//            case Currencies.BYR:
-//                currencyIcon = R.drawable.ic_belarus;
-//                break;
-//            case Currencies.UAH:
-//                currencyIcon = R.drawable.ic_ukraine;
-//                break;
-//            default:
-//                currencyIcon = R.drawable.ic_turkey;
-//                break;
-//        }
-//
-//        v.setImageResource(currencyIcon);
-//    }
+    private static final String SPACE = " ";
 
     public static void setIcon(Currency c, TextView view) {
         String letter;
-        String[] nameWords = c.getName().split(" ");
+        String[] nameWords = c.getName().split(SPACE);
         int wordsCount = nameWords.length;
 
         if (!wordIsUpperCase(nameWords[wordsCount-1]))

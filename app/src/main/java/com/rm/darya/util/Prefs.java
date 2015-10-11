@@ -12,6 +12,7 @@ public final class Prefs {
     public static final String KEY_AUTO_UPDATE = "auto_update";
     public static final String KEY_UPDATE_WHEN_ROAMING = "roaming_update";
     private static final String KEY_LAST_UPDATE_DAY = "last_update";
+    private static final String KEY_INITIALIZED = "initialized";
 
     private static final String PREF_MAIN_NAME = "currency_preferences";
     private static final String TAG = "Prefs";
@@ -70,5 +71,13 @@ public final class Prefs {
     public static void saveToday() {
 
         put(KEY_LAST_UPDATE_DAY, TimeUtil.getToday());
+    }
+
+    public static boolean isRatesInitialized() {
+        return sPreferences.getBoolean(KEY_INITIALIZED, false);
+    }
+
+    public static void setRatesInitialized() {
+        sEditor.putBoolean(KEY_INITIALIZED, true);
     }
 }

@@ -71,22 +71,21 @@ public class ConverterFragment extends BaseFragment
         mCurrencyListView.setAdapter(mCurrencyAdapter);
         mRefreshLayout.setOnRefreshListener(this);
 
-        if (!mCurrencies.isEmpty()) {
-            showListIsEmpty(false);
-            initializeCurrenciesIfNeeded();
-        } else
-            showListIsEmpty(true);
-
+        showListIsEmpty(mCurrencies.isEmpty());
+        initializeCurrenciesIfNeeded();
+        showLastUpdateIfNeeded();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateList();
+        Log.d("ConverterFragment", "onResume");
+        if (Prefs.isRatesInitialized()) updateList();
     }
 
     void updateList() {
         mCurrencies = CurrencyUtils.getSelectedCurrencies();
+        showListIsEmpty(mCurrencies.isEmpty());
         if (mCurrencyAdapter != null) {
             mCurrencyAdapter.updateDataSet(mCurrencies);
             mCurrencyListView.setAdapter(mCurrencyAdapter);
@@ -94,16 +93,14 @@ public class ConverterFragment extends BaseFragment
     }
 
     private void showListIsEmpty(boolean isEmpty) {
-
         mEmptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         mCurrencyListView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         mRefreshLayout.setEnabled(!isEmpty);
     }
 
     private void initializeCurrenciesIfNeeded() {
-
-        if (mCurrencies.get(0).getRate() == 0) {
-
+        Log.d("ConverterFragment", "initializeCurrenciesIfNeeded");
+        if (!Prefs.isRatesInitialized()) {
             mLocalHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -111,9 +108,11 @@ public class ConverterFragment extends BaseFragment
                     updateCurrencies();
                 }
             }, 100);
+        }
+    }
 
-        } else if (getSavedToday() < getToday()) {
-
+    private void showLastUpdateIfNeeded() {
+        if (Prefs.isRatesInitialized() && getSavedToday() < getToday()) {
             mLocalHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -128,7 +127,7 @@ public class ConverterFragment extends BaseFragment
     }
 
     private void updateCurrencies() {
-
+        Log.d("ConverterFragment", "updateCurrencies");
         if (Connectivity.isRoaming() &&
                 !Prefs.get().getBoolean(Prefs.KEY_UPDATE_WHEN_ROAMING, false)) {
 
@@ -149,6 +148,7 @@ public class ConverterFragment extends BaseFragment
 
     @Override
     public void onRefresh() {
+        Log.d("ConverterFragment", "onRefresh");
         mRefreshLayout.setEnabled(false);
         updateCurrencies();
     }
@@ -164,18 +164,17 @@ public class ConverterFragment extends BaseFragment
     //region Update task callbacks
     @Override
     public void onParseSuccessful() {
-
         ArrayList<Currency> currencies = CurrencyUtils.getSelectedCurrencies();
 
         if (getActivity() != null) {
             Snackbar.make(mRootView, "Данные обновлены", Snackbar.LENGTH_LONG).show();
 
             mRefreshLayout.setRefreshing(false);
-            mRefreshLayout.setEnabled(true);
+            mRefreshLayout.setEnabled(!currencies.isEmpty());
             mCurrencyAdapter.updateDataSet(currencies);
-//            mCurrencyListView.setAdapter(mCurrencyAdapter);
         }
 
+        Prefs.setRatesInitialized();
         Prefs.saveToday();
     }
 
