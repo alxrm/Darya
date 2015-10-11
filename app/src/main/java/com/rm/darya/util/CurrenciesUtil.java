@@ -1,12 +1,6 @@
 package com.rm.darya.util;
 
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.widget.ImageView;
-
-import com.rm.darya.R;
-import com.rm.darya.model.Currency;
-import com.rm.darya.util.updating.Currencies;
 
 /**
  * Created by alex
@@ -22,7 +16,7 @@ public final class CurrenciesUtil {
 //
     private static final int SELECTED = Color.parseColor("#ff00E5FF");
     private static final int UNSELECTED_ICON = Color.parseColor("#ffefefef");
-    private static final int BG_UNSELECTED = R.drawable.unselected_currency_bg;
+//    private static final int BG_UNSELECTED = R.drawable.unselected_currency_bg;
 
 //    static {
 //        sDecimalSymbols.setDecimalSeparator('.');
@@ -52,43 +46,41 @@ public final class CurrenciesUtil {
 //        return TextUtils.isEmpty(inp) ? inp : inp.replaceAll(",", "");
 //    }
 
-    public static void setIcon(ImageView v, Currency c) {
-
-        int currencyIcon;
-
-        switch (c.getCode()) {
-            case Currencies.USD:
-                currencyIcon = R.drawable.ic_dollar;
-                break;
-            case Currencies.EUR:
-                currencyIcon = R.drawable.ic_euro;
-                break;
-            case Currencies.GBP:
-                currencyIcon = R.drawable.ic_pound;
-                break;
-            case Currencies.RUB:
-                currencyIcon = R.drawable.ic_ruble;
-                break;
-            case Currencies.BYR:
-                currencyIcon = R.drawable.ic_belarus;
-                break;
-            case Currencies.UAH:
-                currencyIcon = R.drawable.ic_ukraine;
-                break;
-            default:
-                currencyIcon = R.drawable.ic_turkey;
-                break;
-        }
-
-        v.setImageResource(currencyIcon);
-    }
-
-    public static void setSelectedIcon(boolean isSelected, ImageView view) {
-
-        int drawableColor = isSelected ? SELECTED : UNSELECTED_ICON;
-
-        view.setBackgroundResource(BG_UNSELECTED);
-        view.getDrawable().mutate().setColorFilter(drawableColor, PorterDuff.Mode.MULTIPLY);
-    }
+//    public static void setIcon(ImageView v, Currency c) {
+//
+//        int currencyIcon;
+//
+//        switch (c.getCode()) {
+//            case Currencies.USD:
+//                currencyIcon = R.drawable.ic_dollar;
+//                break;
+//            case Currencies.EUR:
+//                currencyIcon = R.drawable.ic_euro;
+//                break;
+//            case Currencies.GBP:
+//                currencyIcon = R.drawable.ic_pound;
+//                break;
+//            case Currencies.RUB:
+//                currencyIcon = R.drawable.ic_ruble;
+//                break;
+//            case Currencies.BYR:
+//                currencyIcon = R.drawable.ic_belarus;
+//                break;
+//            case Currencies.UAH:
+//                currencyIcon = R.drawable.ic_ukraine;
+//                break;
+//            default:
+//                currencyIcon = R.drawable.ic_turkey;
+//                break;
+//        }
+//
+//        v.setImageResource(currencyIcon);
+//    }
+//
+//    public static void setSelectedIcon(boolean isSelected, ImageView view) {
+//
+//        int drawableColor = isSelected ? SELECTED : UNSELECTED_ICON;
+//        view.getDrawable().mutate().setColorFilter(drawableColor, PorterDuff.Mode.MULTIPLY);
+//    }
 
 }

@@ -110,8 +110,9 @@ public class SettingsFragment extends BaseFragment
     public void onResume() {
         super.onResume();
         mChoosable = CurrencyUtils.getAllCurrencies();
-        if (mCurrencyAdapter != null)
+        if (mCurrencyAdapter != null) {
             mCurrencyAdapter.updateDataSet(mChoosable);
+        }
     }
 
     @Override

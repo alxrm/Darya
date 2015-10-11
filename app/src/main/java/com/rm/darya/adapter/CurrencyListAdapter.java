@@ -3,18 +3,18 @@ package com.rm.darya.adapter;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.rm.darya.R;
-import com.rm.darya.model.Currency;
 import com.rm.darya.events.typing.TextWatcherAdapter;
 import com.rm.darya.events.typing.TypingEvent;
+import com.rm.darya.model.Currency;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static com.rm.darya.util.CurrencyUtils.Parser.FLOAT_PATTERN;
 import static com.rm.darya.util.CurrencyUtils.Parser.prepare;
@@ -99,7 +99,7 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
     }
 
     public void updateDataSet(ArrayList<Currency> currencies) {
-        Collections.sort(currencies);
+        Log.d("CurrencyListAdapter", "updateDataSet PING");
         mCurrencyList = currencies;
         mBroadcast.updateList(currencies);
         notifyDataSetChanged();

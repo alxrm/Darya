@@ -87,7 +87,10 @@ public class ConverterFragment extends BaseFragment
 
     void updateList() {
         mCurrencies = CurrencyUtils.getSelectedCurrencies();
-        if (mCurrencyAdapter != null) mCurrencyAdapter.updateDataSet(mCurrencies);
+        if (mCurrencyAdapter != null) {
+            mCurrencyAdapter.updateDataSet(mCurrencies);
+            mCurrencyListView.setAdapter(mCurrencyAdapter);
+        }
     }
 
     private void showListIsEmpty(boolean isEmpty) {

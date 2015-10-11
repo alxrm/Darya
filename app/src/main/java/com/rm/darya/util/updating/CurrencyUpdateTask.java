@@ -1,7 +1,6 @@
 package com.rm.darya.util.updating;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.rm.darya.events.OnParseResultListener;
 import com.rm.darya.model.Currency;
@@ -17,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static com.rm.darya.util.CurrencyUtils.ExceptedCurrencies.isExceptedCode;
+
 /**
  * Created by alex
  */
@@ -28,6 +29,10 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
             = "q=select+*+from%20yahoo.finance.xchange%20where%20pair%20in%20";
     private static final String REQUEST_DB_SOURCE
             = "&env=store://datatables.org/alltableswithkeys";
+
+    // exception codes
+    private static final String ZWD_CODE = "ZWD";
+    private static final String EEK_CODE = "EEK";
 
     private ArrayList<Currency> mProjection;
     private OnParseResultListener mListener;
@@ -65,10 +70,7 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
         URL url = getUrl();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        conn.setReadTimeout(10000);
-        conn.setConnectTimeout(15000);
         conn.setRequestMethod("GET");
-        conn.setDoInput(true);
         conn.connect();
 
         return conn.getInputStream();
@@ -80,10 +82,13 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
         final StringBuilder currencyPairs = new StringBuilder();
 
         for (int i = 0; i < mProjection.size(); i++) {
-            currencyPairs.append("%22")
-                    .append(mProjection.get(i).getCode())
-                    .append("USD%22")
-                    .append((i == (mProjection.size() - 1)) ? "" : ",");
+            String code = mProjection.get(i).getCode();
+
+            if (!isExceptedCode(code))
+                currencyPairs.append("%22")
+                        .append(code)
+                        .append("USD%22")
+                        .append(i == mProjection.size() - 2 ? "" : ",");
         }
 
         rawLink =
@@ -91,9 +96,9 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
                 REQUEST_DB_QUERY +
                 "(" + currencyPairs.toString() + ")" +
                 REQUEST_DB_SOURCE;
-        Log.d("CurrencyUpdateTask", "getUrl - rawLink: "
-                + rawLink);
 
         return new URL(rawLink);
+//        Log.d("CurrencyUpdateTask", "getUrl - rawLink: "
+//                + rawLink);
     }
 }

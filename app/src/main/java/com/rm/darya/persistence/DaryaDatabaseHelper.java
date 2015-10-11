@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
+import static com.rm.darya.Darya.app;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_CODE;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_NAME;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_RATE;
@@ -28,6 +28,7 @@ import static com.rm.darya.persistence.CurrencyTable.COLUMN_SELECTED;
 import static com.rm.darya.persistence.CurrencyTable.CREATE;
 import static com.rm.darya.persistence.CurrencyTable.NAME;
 import static com.rm.darya.persistence.CurrencyTable.PROJECTION;
+import static com.rm.darya.util.CurrencyUtils.ExceptedCurrencies.getRate;
 
 /**
  * Created by alex
@@ -40,7 +41,6 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
     private static final String CURRENCIES_LIST_FILE = "currencies.json";
 
     private static DaryaDatabaseHelper mInstance;
-    private static List<Currency> sCurrencies;
     private final AssetManager sAssets;
 
     private DaryaDatabaseHelper(Context context) {
@@ -59,11 +59,34 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         return loadCurrencies(context, selectedOnly);
     }
 
+    public static void updateCurrencySelection(Context context, Currency currency) {
+        SQLiteDatabase writableDatabase = getWritableDatabase(context);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_SELECTED, currency.isSelected());
+
+        writableDatabase.update(NAME, contentValues, COLUMN_CODE + "=?",
+                new String[]{currency.getCode()});
+    }
+
+    public static void updateAllRates(Context c, ArrayList<Currency> currencies) {
+        SQLiteDatabase db = getReadableDatabase(c);
+
+        db.beginTransaction();
+        try {
+            for (Currency currency : currencies)
+                DaryaDatabaseHelper.updateCurrencyRate(app(), currency);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     private static ArrayList<Currency> loadCurrencies(Context context, boolean selectedOnly) {
         Cursor data = DaryaDatabaseHelper.getCurrencyCursor(context);
         ArrayList<Currency> tmpCurrencies = new ArrayList<>(data.getCount());
         Log.d("DaryaDatabaseHelper", "loadCurrencies - data.getCount(): "
-                        + data.getCount());
+                + data.getCount());
 
         if (data.getCount() == 0) return tmpCurrencies;
 
@@ -91,8 +114,6 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         c.setRate(rate);
         c.setSelected(isSelected);
 
-        Log.d("DaryaDatabaseHelper", "getCurrency: "
-                + c);
         return c;
     }
 
@@ -103,21 +124,11 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public static void updateCurrencyRate(Context context, Currency currency) {
+    private static void updateCurrencyRate(Context context, Currency currency) {
         SQLiteDatabase writableDatabase = getWritableDatabase(context);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_RATE, String.valueOf(currency.getRate()));
-
-        writableDatabase.update(NAME, contentValues, COLUMN_CODE + "=?",
-                new String[]{currency.getCode()});
-    }
-
-    public static void updateCurrencySelection(Context context, Currency currency) {
-        SQLiteDatabase writableDatabase = getWritableDatabase(context);
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_SELECTED, currency.isSelected());
 
         writableDatabase.update(NAME, contentValues, COLUMN_CODE + "=?",
                 new String[]{currency.getCode()});
@@ -177,9 +188,14 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
     private void fillCurrency(SQLiteDatabase db, ContentValues values, JSONObject currency)
             throws JSONException {
         values.clear();
-        values.put(COLUMN_NAME, currency.getString(JsonAttributes.NAME));
-        values.put(COLUMN_CODE, currency.getString(JsonAttributes.CODE));
-        values.put(COLUMN_RATE, EMPTY_RATE);
+
+        String name = currency.getString(JsonAttributes.NAME);
+        String code = currency.getString(JsonAttributes.CODE);
+        float rate = getRate(code);
+
+        values.put(COLUMN_NAME, name);
+        values.put(COLUMN_CODE, code);
+        values.put(COLUMN_RATE, rate);
         values.put(COLUMN_SELECTED, false);
         db.insert(NAME, null, values);
     }

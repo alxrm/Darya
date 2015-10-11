@@ -53,7 +53,6 @@ public class CurrencyParser {
         while (parser.next() != XmlPullParser.END_TAG) {
 
             if (parser.getEventType() != XmlPullParser.START_TAG) continue;
-
             String name = parser.getName();
 
             if (name.equals(TAG_RATE)) {
@@ -65,6 +64,10 @@ public class CurrencyParser {
                 skipTag(parser);
             }
         }
+//        try {
+//        } catch (XmlPullParserException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private static Currency parseCurrency(XmlPullParser parser)
@@ -81,6 +84,8 @@ public class CurrencyParser {
             switch (name) {
                 case TAG_SUB_NAME:
                     String code = getCode(parser).substring(0, 3);
+                    Log.d("CurrencyParser", "parseCurrency - code: "
+                            + code);
                     if (code.equals(NOT_AVAILABLE)) {
                         return null;
                     }
@@ -90,6 +95,8 @@ public class CurrencyParser {
                     }
                 case TAG_SUB_RATE:
                     String rate = getRate(parser);
+                    Log.d("CurrencyParser", "parseCurrency - rate: "
+                            + rate);
                     if (rate.equals(NOT_AVAILABLE)) {
                         return null;
                     }
@@ -112,8 +119,8 @@ public class CurrencyParser {
         String rate = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, TAG_SUB_RATE);
 
-        Log.d("CurrencyParser", "getRate - rate: "
-                + rate);
+//        Log.d("CurrencyParser", "getRate - rate: "
+//                + rate);
 
         return rate;
     }
@@ -125,13 +132,13 @@ public class CurrencyParser {
         String code = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, TAG_SUB_NAME);
 
-        Log.d("CurrencyParser", "getCode - code: "
-                + code);
+//        Log.d("CurrencyParser", "getCode - code: "
+//                + code);
         return code;
     }
 
     private static void skipTag(XmlPullParser parser)
-            throws XmlPullParserException, IOException {
+            throws IOException, XmlPullParserException {
 
         int depth = 1;
 

@@ -18,8 +18,7 @@ import static com.rm.darya.Darya.app;
 public class CurrencyUtils {
 
     public static void pushRates(ArrayList<Currency> currencies) {
-        for (Currency c : currencies)
-            DaryaDatabaseHelper.updateCurrencyRate(app(), c);
+        DaryaDatabaseHelper.updateAllRates(app(), currencies);
     }
 
     public static void selectCurrency(Currency currency) {
@@ -87,5 +86,29 @@ public class CurrencyUtils {
         public static String prepare(String inp) {
             return TextUtils.isEmpty(inp) ? inp : inp.replaceAll(",", "");
         }
+    }
+
+    public static class ExceptedCurrencies {
+
+        public static final String ZWD_CODE = "ZWD";
+        public static final String EEK_CODE = "EEK";
+
+        public static final float ZWD_RATE = 0.00276319F;
+        public static final float EEK_RATE = 0.085249F;
+        public static final float EMPTY_RATE = 0;
+
+        public static float getRate(String code) {
+            switch (code) {
+                case ZWD_CODE: return ZWD_RATE;
+                case EEK_CODE: return EEK_RATE;
+                default: return EMPTY_RATE;
+            }
+        }
+
+        public static boolean isExceptedCode(String code) {
+            return code.equals(ZWD_CODE) || code.equals(EEK_CODE);
+        }
+
+        private ExceptedCurrencies() {}
     }
 }

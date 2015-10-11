@@ -5,13 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rm.darya.R;
 import com.rm.darya.model.Currency;
-import com.rm.darya.util.CurrenciesUtil;
 import com.rm.darya.util.Dimen;
+import com.rm.darya.util.view.TextViewSelector;
 
 import java.util.ArrayList;
 
@@ -65,8 +64,8 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
         holder.mName.setText(name);
         holder.mCode.setText(code);
         holder.mSelectedCheck.setChecked(checked);
-        CurrenciesUtil.setIcon(holder.mIcon, currency);
-        CurrenciesUtil.setSelectedIcon(checked, holder.mIcon);
+        TextViewSelector.setSelectedIcon(checked, holder.mIcon);
+        TextViewSelector.setIcon(currency, holder.mIcon);
     }
 
     @Override
@@ -95,7 +94,7 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
         
         private TextView mName;
         private TextView mCode;
-        private ImageView mIcon;
+        private TextView mIcon;
         private CheckBox mSelectedCheck;
 
         public ViewHolder(View itemView) {
@@ -103,7 +102,7 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
 
             mName = (TextView) itemView.findViewById(R.id.chooser_currency_name);
             mCode = (TextView) itemView.findViewById(R.id.chooser_currency_code);
-            mIcon = (ImageView) itemView.findViewById(R.id.chooser_currency_icon);
+            mIcon = (TextView) itemView.findViewById(R.id.chooser_currency_icon);
             mSelectedCheck = (CheckBox) itemView.findViewById(R.id.chooser_currency_selected);
 
             itemView.setOnClickListener(this);
@@ -117,7 +116,7 @@ public class ChooserListAdapter extends RecyclerView.Adapter<ChooserListAdapter.
 
             boolean isChecked = mSelectedCheck.isChecked();
 
-            CurrenciesUtil.setSelectedIcon(isChecked, mIcon);
+            TextViewSelector.setSelectedIcon(isChecked, mIcon);
 
             if (mSelectedListener != null)
                 this.mSelectedListener.onItemSelected(isChecked, getAdapterPosition());
