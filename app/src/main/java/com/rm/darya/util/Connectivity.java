@@ -43,4 +43,16 @@ public class Connectivity {
     public static boolean isConnected() {
         return isWifiConnected() | isMobileWebConnected();
     }
+
+    public static boolean isAllowed() {
+        return (isRoaming() && isRoamingAllowed()) || isBackgroundUpdateAllowed();
+    }
+
+    public static boolean isRoamingAllowed() {
+        return Prefs.get().getBoolean(Prefs.KEY_UPDATE_WHEN_ROAMING, false);
+    }
+
+    public static boolean isBackgroundUpdateAllowed() {
+        return Prefs.get().getBoolean(Prefs.KEY_AUTO_UPDATE, false);
+    }
 }

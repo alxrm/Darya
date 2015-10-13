@@ -1,6 +1,12 @@
 package com.rm.darya.util;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+
+import com.rm.darya.util.updating.CurrencyUpdateReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +18,24 @@ import java.util.Locale;
  */
 
 public class TimeUtil {
+
+    public static void setAlarm(Context context) {
+        Intent alarmIntent = new Intent(context, CurrencyUpdateReceiver.class);
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                alarmIntent,
+                0
+        );
+
+        manager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+        );
+    }
 
     public static long unixTime() {
 

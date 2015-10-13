@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.rm.darya.events.OnParseResultListener;
-import com.rm.darya.util.Connectivity;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.TimeUtil;
+
+import static com.rm.darya.util.Connectivity.init;
+import static com.rm.darya.util.Connectivity.isAllowed;
+import static com.rm.darya.util.Connectivity.isConnected;
 
 /**
  * Created by alex
@@ -17,39 +20,21 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParse
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("CurrencyUpdateReceiver", "onReceive");
 
         Prefs.init(context);
-        Connectivity.init(context);
-
-        CurrencyUpdateTask updateTask =
-                new CurrencyUpdateTask(this);
+        init(context);
 
         if (Prefs.getSavedToday() == TimeUtil.getToday()) return;
 
-        Log.d("CurrencyUpdateReceiver", "onReceive - Connectivity.isConnected(): "
-                + Connectivity.isConnected());
+        CurrencyUpdateTask updateTask = new CurrencyUpdateTask(this);
 
-        if (!isAvailable())
-            Log.d("CurrencyUpdateReceiver", "Update is not available");
-        else if (Connectivity.isConnected()) {
-
-            // FIXME prevent multiple task execution
-            Log.d("CurrencyUpdateReceiver", "Update available");
+        if (!isAllowed())
+            Log.d("CurrencyUpdateReceiver", "Update is not allowed");
+        else if (isConnected())
             updateTask.execute();
-
-//            Log.d("CurrencyUpdateReceiver", "onReceive - updateTask.getStatus(): "
-//                                + updateTask.getStatus());
-//            if (updateTask.getStatus() != AsyncTask.Status.RUNNING) TODO not working
-        } else {
+        else
             Log.d("CurrencyUpdateReceiver", "Not connected to the network");
-        }
-    }
-
-    private boolean isAvailable() {
-
-        return !((Connectivity.isRoaming() &&
-                !Prefs.get().getBoolean(Prefs.KEY_UPDATE_WHEN_ROAMING, false))
-                || !Prefs.get().getBoolean(Prefs.KEY_AUTO_UPDATE, false));
     }
 
     @Override

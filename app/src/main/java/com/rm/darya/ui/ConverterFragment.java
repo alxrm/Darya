@@ -17,7 +17,6 @@ import com.rm.darya.adapter.CurrencyListAdapter;
 import com.rm.darya.events.OnParseResultListener;
 import com.rm.darya.events.OnProjectionChangeListener;
 import com.rm.darya.model.Currency;
-import com.rm.darya.util.Connectivity;
 import com.rm.darya.util.CurrencyUtils;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.base.BaseFragment;
@@ -25,6 +24,8 @@ import com.rm.darya.util.updating.CurrencyUpdateTask;
 
 import java.util.ArrayList;
 
+import static com.rm.darya.util.Connectivity.isRoaming;
+import static com.rm.darya.util.Connectivity.isRoamingAllowed;
 import static com.rm.darya.util.Prefs.getSavedToday;
 import static com.rm.darya.util.TimeUtil.getDay;
 import static com.rm.darya.util.TimeUtil.getToday;
@@ -118,7 +119,7 @@ public class ConverterFragment extends BaseFragment
                 public void run() {
                     Snackbar.make(
                             mRootView,
-                            "Последнее обновление: " + getDay(getSavedToday()),
+                            "Last update: " + getDay(getSavedToday()),
                             Snackbar.LENGTH_LONG)
                             .show();
                 }
@@ -128,12 +129,11 @@ public class ConverterFragment extends BaseFragment
 
     private void updateCurrencies() {
         Log.d("ConverterFragment", "updateCurrencies");
-        if (Connectivity.isRoaming() &&
-                !Prefs.get().getBoolean(Prefs.KEY_UPDATE_WHEN_ROAMING, false)) {
+        if (isRoaming() && !isRoamingAllowed()) {
 
             Snackbar.make(
                     mRootView,
-                    "Обновление в роуминге отключено",
+                    "Update in roaming turned off",
                     Snackbar.LENGTH_LONG
             ).show();
 
@@ -167,7 +167,7 @@ public class ConverterFragment extends BaseFragment
         ArrayList<Currency> currencies = CurrencyUtils.getSelectedCurrencies();
 
         if (getActivity() != null) {
-            Snackbar.make(mRootView, "Данные обновлены", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, "Rates updated", Snackbar.LENGTH_LONG).show();
 
             mRefreshLayout.setRefreshing(false);
             mRefreshLayout.setEnabled(!currencies.isEmpty());
@@ -183,8 +183,8 @@ public class ConverterFragment extends BaseFragment
 
         if (getActivity() == null) return;
 
-        Snackbar.make(mRootView, "Невозможно обновить данные", Snackbar.LENGTH_SHORT)
-                .setAction("Заново", new View.OnClickListener() {
+        Snackbar.make(mRootView, "Update error", Snackbar.LENGTH_SHORT)
+                .setAction("RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 

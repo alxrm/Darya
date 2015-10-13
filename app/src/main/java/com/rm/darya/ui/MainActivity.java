@@ -12,10 +12,13 @@ import android.view.MenuItem;
 import com.rm.darya.R;
 import com.rm.darya.events.OnInteractionListener;
 import com.rm.darya.util.Prefs;
+import com.rm.darya.util.TimeUtil;
 import com.rm.darya.util.base.BaseActivity;
 
 import java.util.ArrayList;
 
+import static com.rm.darya.util.Connectivity.isBackgroundUpdateAllowed;
+import static com.rm.darya.util.Connectivity.isRoamingAllowed;
 import static com.rm.darya.util.Prefs.KEY_AUTO_UPDATE;
 import static com.rm.darya.util.Prefs.KEY_UPDATE_WHEN_ROAMING;
 
@@ -33,6 +36,7 @@ public class MainActivity extends BaseActivity implements OnInteractionListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TimeUtil.setAlarm(this);
 
         mToolbar.setTitle(R.string.app_name);
         setSupportActionBar(mToolbar);
@@ -72,8 +76,8 @@ public class MainActivity extends BaseActivity implements OnInteractionListener 
         MenuItem autoUpdate = menu.findItem(R.id.action_auto_update);
         MenuItem roamingUpdate = menu.findItem(R.id.action_update_roaming);
 
-        autoUpdate.setChecked(Prefs.get().getBoolean(KEY_AUTO_UPDATE, false));
-        roamingUpdate.setChecked(Prefs.get().getBoolean(KEY_UPDATE_WHEN_ROAMING, false));
+        autoUpdate.setChecked(isBackgroundUpdateAllowed());
+        roamingUpdate.setChecked(isRoamingAllowed());
 
         return super.onPrepareOptionsMenu(menu);
     }
