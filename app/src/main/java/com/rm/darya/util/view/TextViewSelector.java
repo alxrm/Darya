@@ -29,6 +29,8 @@ public class TextViewSelector {
     }
 
     private static boolean wordIsUpperCase(String word) {
+        if (word.contains(SPACE))
+            throw new IllegalArgumentException("Must be single word");
         boolean wordIsUpperCase = true;
 
         for (char character : word.toCharArray())

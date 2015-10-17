@@ -19,6 +19,8 @@ import java.util.Locale;
 
 public class TimeUtil {
 
+    private static final long FOUR_HOURS = 14400000L;
+
     public static void setAlarm(Context context) {
         Intent alarmIntent = new Intent(context, CurrencyUpdateReceiver.class);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -32,7 +34,7 @@ public class TimeUtil {
         manager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis(),
-                AlarmManager.INTERVAL_DAY,
+                FOUR_HOURS,
                 pendingIntent
         );
     }
@@ -44,12 +46,12 @@ public class TimeUtil {
 
     public static String getDay(long unix) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM", new Locale("ru", "RU"));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d", new Locale("en", "US"));
         Date d = new Date();
         String resDate;
 
         d.setTime(unix * 1000);
-        dateFormat.applyPattern("d MMMM");
+        dateFormat.applyPattern("MMMM d");
 
         resDate = dateFormat.format(d);
 
