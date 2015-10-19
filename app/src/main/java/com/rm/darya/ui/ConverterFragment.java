@@ -2,6 +2,7 @@ package com.rm.darya.ui;
 
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ public class ConverterFragment extends BaseFragment
     private ArrayList<Currency> mCurrencies = new ArrayList<>();
     private CurrencyUpdateTask mUpdateTask;
     private RelativeLayout mEmptyView;
+    private CoordinatorLayout mCoordinator;
 
     public ConverterFragment() {
         // Required empty public constructor
@@ -59,6 +61,7 @@ public class ConverterFragment extends BaseFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mCoordinator = (CoordinatorLayout) findViewById(R.id.converter_coordinator);
         mEmptyView = (RelativeLayout) findViewById(R.id.empty_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.converter_refresh_layout);
         mCurrencyListView = (RecyclerView) findViewById(R.id.currency_list);
@@ -118,7 +121,7 @@ public class ConverterFragment extends BaseFragment
                 @Override
                 public void run() {
                     Snackbar.make(
-                            mRootView,
+                            mCoordinator,
                             "Last update: " + getDay(getSavedToday()),
                             Snackbar.LENGTH_LONG)
                             .show();
@@ -132,7 +135,7 @@ public class ConverterFragment extends BaseFragment
         if (isRoaming() && !isRoamingAllowed()) {
 
             Snackbar.make(
-                    mRootView,
+                    mCoordinator,
                     "Update in roaming turned off",
                     Snackbar.LENGTH_LONG
             ).show();
@@ -167,7 +170,7 @@ public class ConverterFragment extends BaseFragment
         ArrayList<Currency> currencies = CurrencyUtils.getSelectedCurrencies();
 
         if (getActivity() != null) {
-            Snackbar.make(mRootView, "Rates updated", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mCoordinator, "Rates updated", Snackbar.LENGTH_LONG).show();
 
             mRefreshLayout.setRefreshing(false);
             mRefreshLayout.setEnabled(!currencies.isEmpty());
@@ -183,7 +186,7 @@ public class ConverterFragment extends BaseFragment
 
         if (getActivity() == null) return;
 
-        Snackbar.make(mRootView, "Update error", Snackbar.LENGTH_SHORT)
+        Snackbar.make(mCoordinator, "Update error", Snackbar.LENGTH_SHORT)
                 .setAction("RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

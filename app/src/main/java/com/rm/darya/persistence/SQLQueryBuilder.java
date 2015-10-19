@@ -28,7 +28,6 @@ public class SQLQueryBuilder {
 
     //region SQL keywords
     public static final String ALL = " * ";
-    public static final String TEXT = " TEXT ";
     private static final String SPACE = " ";
     private static final String SELECT = " SELECT ";
     private static final String FROM = " FROM ";
