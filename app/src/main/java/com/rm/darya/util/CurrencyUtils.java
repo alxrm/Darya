@@ -8,7 +8,6 @@ import com.rm.darya.persistence.DaryaDatabaseHelper;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static com.rm.darya.Darya.app;
 
@@ -26,29 +25,15 @@ public class CurrencyUtils {
     }
 
     public static ArrayList<Currency> getSelectedCurrencies() {
-        ArrayList<Currency> selected = DaryaDatabaseHelper.getCurrencies(app(), true);
-        Collections.sort(selected);
-        return ListUtils.filter(selected, new ListUtils.Predicate<Currency>() {
-            @Override
-            public boolean apply(Currency type) {
-                return type.isSelected();
-            }
-        });
+        return DaryaDatabaseHelper.getSelectedCurrencies(app());
     }
 
     public static ArrayList<Currency> getAllCurrencies() {
-        ArrayList<Currency> all = DaryaDatabaseHelper.getCurrencies(app(), false);
-        Collections.sort(all);
-        return all;
+        return DaryaDatabaseHelper.getCurrencies(app());
     }
 
-    public static ArrayList<Currency> findCurrencies(final String query) {
-        return ListUtils.filter(getAllCurrencies(), new ListUtils.Predicate<Currency>() {
-            @Override
-            public boolean apply(Currency type) {
-                return type.filter(query);
-            }
-        });
+    public static ArrayList<Currency> findCurrencies(String query) {
+        return DaryaDatabaseHelper.findCurrencies(app(), query);
     }
 
     public static class Parser {

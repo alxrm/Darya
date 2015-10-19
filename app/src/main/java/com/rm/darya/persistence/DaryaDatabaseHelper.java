@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.rm.darya.Darya.app;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_CODE;
@@ -26,8 +27,10 @@ import static com.rm.darya.persistence.CurrencyTable.COLUMN_NAME;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_RATE;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_SELECTED;
 import static com.rm.darya.persistence.CurrencyTable.CREATE;
-import static com.rm.darya.persistence.CurrencyTable.NAME;
-import static com.rm.darya.persistence.CurrencyTable.PROJECTION;
+import static com.rm.darya.persistence.CurrencyTable.TABLE_NAME;
+import static com.rm.darya.persistence.SQLQueryBuilder.ALL;
+import static com.rm.darya.persistence.SQLQueryBuilder.EQUALS;
+import static com.rm.darya.persistence.SQLQueryBuilder.LIKE;
 import static com.rm.darya.util.CurrencyUtils.ExceptedCurrencies.getRate;
 
 /**
@@ -37,26 +40,33 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "darya.db";
     private static final int DB_VERSION = 1;
-    private static final String EMPTY_RATE = "0";
     private static final String CURRENCIES_LIST_FILE = "currencies.json";
 
-    private static DaryaDatabaseHelper mInstance;
-    private final AssetManager sAssets;
+    private static DaryaDatabaseHelper sInstance;
+    private final AssetManager mAssets;
 
     private DaryaDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        sAssets = context.getAssets();
+        mAssets = context.getAssets();
     }
 
     public static DaryaDatabaseHelper getInstance(Context context) {
-        if (null == mInstance) {
-            mInstance = new DaryaDatabaseHelper(context);
+        if (null == sInstance) {
+            sInstance = new DaryaDatabaseHelper(context);
         }
-        return mInstance;
+        return sInstance;
     }
 
-    public static ArrayList<Currency> getCurrencies(Context context, boolean selectedOnly) {
-        return loadCurrencies(context, selectedOnly);
+    public static ArrayList<Currency> getCurrencies(Context context) {
+        return loadCurrencies(getCurrencyCursor(context));
+    }
+
+    public static ArrayList<Currency> findCurrencies(Context context, String query) {
+        return loadCurrencies(getSearchCursor(context, query));
+    }
+
+    public static ArrayList<Currency> getSelectedCurrencies(Context context) {
+        return loadCurrencies(getSelectionCursor(context));
     }
 
     public static void updateCurrencySelection(Context context, Currency currency) {
@@ -65,7 +75,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_SELECTED, currency.isSelected());
 
-        writableDatabase.update(NAME, contentValues, COLUMN_CODE + "=?",
+        writableDatabase.update(TABLE_NAME, contentValues, COLUMN_CODE + "=?",
                 new String[]{currency.getCode()});
     }
 
@@ -82,23 +92,17 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private static ArrayList<Currency> loadCurrencies(Context context, boolean selectedOnly) {
-        Cursor data = DaryaDatabaseHelper.getCurrencyCursor(context);
+    private static ArrayList<Currency> loadCurrencies(Cursor data) {
         ArrayList<Currency> tmpCurrencies = new ArrayList<>(data.getCount());
-        Log.d("DaryaDatabaseHelper", "loadCurrencies - data.getCount(): "
-                + data.getCount());
 
         if (data.getCount() == 0) return tmpCurrencies;
 
         do {
             final Currency currency = getCurrency(data);
-            if (selectedOnly) {
-                if (currency.isSelected()) tmpCurrencies.add(currency);
-            } else {
-                tmpCurrencies.add(currency);
-            }
+            tmpCurrencies.add(currency);
         } while (data.moveToNext());
 
+        Collections.sort(tmpCurrencies);
         return tmpCurrencies;
     }
 
@@ -117,9 +121,41 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         return c;
     }
 
+    private static Cursor getSearchCursor(Context c, String searchQuery) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(c);
+        String selectQuery = SQLQueryBuilder.getInstance()
+                .select(ALL)
+                .from(TABLE_NAME)
+                .where()
+                .stringClause(COLUMN_NAME, LIKE, searchQuery)
+                .or()
+                .stringClause(COLUMN_CODE, LIKE, searchQuery)
+                .build();
+        Cursor data = readableDatabase.rawQuery(selectQuery, null);
+        data.moveToFirst();
+        return data;
+    }
+
+    private static Cursor getSelectionCursor(Context context) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String selectQuery = SQLQueryBuilder.getInstance()
+                .select(ALL)
+                .from(TABLE_NAME)
+                .where()
+                .integerClause(COLUMN_SELECTED, EQUALS, 1)
+                .build();
+        Cursor data = readableDatabase.rawQuery(selectQuery, null);
+        data.moveToFirst();
+        return data;
+    }
+
     private static Cursor getCurrencyCursor(Context context) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
-        Cursor data = readableDatabase.query(NAME, PROJECTION, null, null, null, null, null);
+        String selectQuery = SQLQueryBuilder.getInstance()
+                .select(ALL)
+                .from(TABLE_NAME)
+                .build();
+        Cursor data = readableDatabase.rawQuery(selectQuery, null);
         data.moveToFirst();
         return data;
     }
@@ -130,7 +166,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_RATE, String.valueOf(currency.getRate()));
 
-        writableDatabase.update(NAME, contentValues, COLUMN_CODE + "=?",
+        writableDatabase.update(TABLE_NAME, contentValues, COLUMN_CODE + "=?",
                 new String[]{currency.getCode()});
     }
 
@@ -191,18 +227,17 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
 
         String name = currency.getString(JsonAttributes.NAME);
         String code = currency.getString(JsonAttributes.CODE);
-        float rate = getRate(code);
 
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_CODE, code);
-        values.put(COLUMN_RATE, rate);
+        values.put(COLUMN_RATE, getRate(code));
         values.put(COLUMN_SELECTED, false);
-        db.insert(NAME, null, values);
+        db.insert(TABLE_NAME, null, values);
     }
 
     private String readCategoriesFromResources() throws IOException {
         StringBuilder categoriesJson = new StringBuilder();
-        InputStream rawCategories = sAssets.open(CURRENCIES_LIST_FILE);
+        InputStream rawCategories = mAssets.open(CURRENCIES_LIST_FILE);
         BufferedReader reader = new BufferedReader(new InputStreamReader(rawCategories));
         String line;
 

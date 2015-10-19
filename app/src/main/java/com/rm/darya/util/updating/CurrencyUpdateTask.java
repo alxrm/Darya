@@ -100,7 +100,5 @@ public class CurrencyUpdateTask extends AsyncTask<Void, Void, ArrayList<Currency
                 REQUEST_DB_SOURCE;
 
         return new URL(rawLink);
-//        Log.d("CurrencyUpdateTask", "getUrl - rawLink: "
-//                + rawLink);
     }
 }

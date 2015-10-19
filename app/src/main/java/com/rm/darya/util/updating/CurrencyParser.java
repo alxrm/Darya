@@ -64,10 +64,6 @@ public class CurrencyParser {
                 skipTag(parser);
             }
         }
-//        try {
-//        } catch (XmlPullParserException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private static Currency parseCurrency(XmlPullParser parser)
