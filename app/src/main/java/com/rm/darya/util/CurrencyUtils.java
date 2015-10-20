@@ -75,32 +75,17 @@ public class CurrencyUtils {
 
     public static class ExceptedCurrencies {
 
-        public static final String ZWD_CODE = "ZWD";
-        public static final String EEK_CODE = "EEK";
-        public static final String IRR_CODE = "IRR";
-        public static final String VND_CODE = "VND";
+        static final String ZWD_CODE = "ZWD";
+        static final String EEK_CODE = "EEK";
+        static final String IRR_CODE = "IRR";
+        static final String VND_CODE = "VND";
+        static final String USD_CODE = "USD";
 
-        public static final String[] EXCEPTED = {
-                ZWD_CODE, EEK_CODE, IRR_CODE, VND_CODE
+        static final String[] EXCEPTED = {
+                ZWD_CODE, EEK_CODE, IRR_CODE, VND_CODE, USD_CODE
         };
 
-        public static final float ZWD_RATE = 0.00276319F;
-        public static final float EEK_RATE = 0.085249F;
-        public static final float IRR_RATE = 0.0000333800F;
-        public static final float VND_RATE = 0.0000450500F;
-        public static final float EMPTY_RATE = 0;
-
         private ExceptedCurrencies() {}
-
-        public static float getRate(String code) {
-            switch (code) {
-                case ZWD_CODE: return ZWD_RATE;
-                case EEK_CODE: return EEK_RATE;
-                case IRR_CODE: return IRR_RATE;
-                case VND_CODE: return VND_RATE;
-                default: return EMPTY_RATE;
-            }
-        }
 
         public static boolean isExceptedCode(String code) {
             boolean isExcepted = false;

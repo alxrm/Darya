@@ -16,7 +16,7 @@ import static com.rm.darya.util.Connectivity.isConnected;
 /**
  * Created by alex
  */
-public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParseResultListener {
+public class CurrencyUpdateReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,24 +27,38 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver implements OnParse
 
         if (Prefs.getSavedToday() == TimeUtil.getToday()) return;
 
-        CurrencyUpdateTask updateTask = new CurrencyUpdateTask(this);
-
         if (!isAllowed())
             Log.d("CurrencyUpdateReceiver", "Update is not allowed");
         else if (isConnected())
-            updateTask.execute();
+            if (TimeUtil.getWeekAfter(Prefs.getLastUpdateAll()) < TimeUtil.getToday()) {
+                CurrencyUpdateTask.updateSelected(new OnParseResultListener() {
+                    @Override
+                    public void onParseSuccessful() {
+                        Log.d("CurrencyUpdateReceiver", "onParseSuccessful");
+                        Prefs.saveToday();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.d("CurrencyUpdateReceiver", "onError");
+                    }
+                });
+            } else {
+                CurrencyUpdateTask.updateAll(new OnParseResultListener() {
+                    @Override
+                    public void onParseSuccessful() {
+                        Log.d("CurrencyUpdateReceiver", "onParseSuccessful");
+                        Prefs.saveLastUpdateAll();
+                        Prefs.saveToday();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.d("CurrencyUpdateReceiver", "onError");
+                    }
+                });
+            }
         else
             Log.d("CurrencyUpdateReceiver", "Not connected to the network");
-    }
-
-    @Override
-    public void onParseSuccessful() {
-        Log.d("CurrencyUpdateReceiver", "onParseSuccessful");
-        Prefs.saveToday();
-    }
-
-    @Override
-    public void onError() {
-        Log.d("CurrencyUpdateReceiver", "onError");
     }
 }

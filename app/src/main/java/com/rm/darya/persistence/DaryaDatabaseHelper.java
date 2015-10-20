@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.rm.darya.model.Currency;
+import com.rm.darya.util.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +32,6 @@ import static com.rm.darya.persistence.CurrencyTable.TABLE_NAME;
 import static com.rm.darya.persistence.SQLQueryBuilder.ALL;
 import static com.rm.darya.persistence.SQLQueryBuilder.EQUALS;
 import static com.rm.darya.persistence.SQLQueryBuilder.LIKE;
-import static com.rm.darya.util.CurrencyUtils.ExceptedCurrencies.getRate;
 
 /**
  * Created by alex
@@ -188,6 +188,8 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Prefs.saveToday();
+        Prefs.saveLastUpdateAll();
         db.execSQL(CREATE);
         preFillDatabase(db);
     }
@@ -227,10 +229,11 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
 
         String name = currency.getString(JsonAttributes.NAME);
         String code = currency.getString(JsonAttributes.CODE);
+        float rate = Float.parseFloat(currency.getString(JsonAttributes.RATE));
 
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_CODE, code);
-        values.put(COLUMN_RATE, getRate(code));
+        values.put(COLUMN_RATE, rate);
         values.put(COLUMN_SELECTED, false);
         db.insert(TABLE_NAME, null, values);
     }

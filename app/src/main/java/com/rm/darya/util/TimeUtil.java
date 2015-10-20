@@ -20,6 +20,7 @@ import java.util.Locale;
 public class TimeUtil {
 
     private static final long FOUR_HOURS = 14400000L;
+    private static final long WEEK = 604800000L;
 
     public static void setAlarm(Context context) {
         Intent alarmIntent = new Intent(context, CurrencyUpdateReceiver.class);
@@ -77,6 +78,10 @@ public class TimeUtil {
         Log.d("TimeUtil", "Today in millis: " + result);
 
         return result;
+    }
+
+    public static long getWeekAfter(long time) {
+        return time + WEEK;
     }
 
     public static long getToday() {

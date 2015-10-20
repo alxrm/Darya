@@ -6,4 +6,5 @@ package com.rm.darya.persistence;
 public interface JsonAttributes {
     String NAME = "name";
     String CODE = "code";
+    String RATE = "rate";
 }

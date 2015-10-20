@@ -76,7 +76,6 @@ public class ConverterFragment extends BaseFragment
         mRefreshLayout.setOnRefreshListener(this);
 
         showListIsEmpty(mCurrencies.isEmpty());
-        initializeCurrenciesIfNeeded();
         showLastUpdateIfNeeded();
     }
 
@@ -84,7 +83,7 @@ public class ConverterFragment extends BaseFragment
     public void onResume() {
         super.onResume();
         Log.d("ConverterFragment", "onResume");
-        if (Prefs.isRatesInitialized()) updateList();
+        updateList();
     }
 
     void updateList() {
@@ -102,21 +101,8 @@ public class ConverterFragment extends BaseFragment
         mRefreshLayout.setEnabled(!isEmpty);
     }
 
-    private void initializeCurrenciesIfNeeded() {
-        Log.d("ConverterFragment", "initializeCurrenciesIfNeeded");
-        if (!Prefs.isRatesInitialized()) {
-            mLocalHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mRefreshLayout.setRefreshing(true);
-                    updateCurrencies();
-                }
-            }, 100);
-        }
-    }
-
     private void showLastUpdateIfNeeded() {
-        if (Prefs.isRatesInitialized() && getSavedToday() < getToday()) {
+        if (getSavedToday() < getToday()) {
             mLocalHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -130,7 +116,7 @@ public class ConverterFragment extends BaseFragment
         }
     }
 
-    private void updateCurrencies() {
+    private void updateCurrencies(boolean selected) {
         Log.d("ConverterFragment", "updateCurrencies");
         if (isRoaming() && !isRoamingAllowed()) {
 
@@ -144,8 +130,10 @@ public class ConverterFragment extends BaseFragment
             mRefreshLayout.setEnabled(true);
 
         } else {
-            mUpdateTask = new CurrencyUpdateTask(this);
-            mUpdateTask.execute();
+            if (selected)
+                CurrencyUpdateTask.updateSelected(this);
+            else
+                CurrencyUpdateTask.updateAll(this);
         }
     }
 
@@ -153,7 +141,7 @@ public class ConverterFragment extends BaseFragment
     public void onRefresh() {
         Log.d("ConverterFragment", "onRefresh");
         mRefreshLayout.setEnabled(false);
-        updateCurrencies();
+        updateCurrencies(true);
     }
 
     @Override
@@ -177,7 +165,6 @@ public class ConverterFragment extends BaseFragment
             mCurrencyAdapter.updateDataSet(currencies);
         }
 
-        Prefs.setRatesInitialized();
         Prefs.saveToday();
     }
 
@@ -195,7 +182,7 @@ public class ConverterFragment extends BaseFragment
                             @Override
                             public void run() {
                                 mRefreshLayout.setRefreshing(true);
-                                updateCurrencies();
+                                updateCurrencies(true);
                             }
                         }, 100);
                     }
