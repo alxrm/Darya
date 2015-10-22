@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.rm.darya.events.OnParseResultListener;
+import com.rm.darya.util.Connectivity;
 import com.rm.darya.util.Prefs;
 import com.rm.darya.util.TimeUtil;
 
-import static com.rm.darya.util.Connectivity.init;
 import static com.rm.darya.util.Connectivity.isAllowed;
 import static com.rm.darya.util.Connectivity.isConnected;
 
@@ -23,13 +23,14 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver {
         Log.d("CurrencyUpdateReceiver", "onReceive");
 
         Prefs.init(context);
-        init(context);
+        Connectivity.init(context);
 
         if (Prefs.getSavedToday() == TimeUtil.getToday()) return;
 
-        if (!isAllowed())
+        if (!isAllowed()) {
             Log.d("CurrencyUpdateReceiver", "Update is not allowed");
-        else if (isConnected())
+        }
+        else if (isConnected()) {
             if (TimeUtil.getWeekAfter(Prefs.getLastUpdateAll()) < TimeUtil.getToday()) {
                 CurrencyUpdateTask.updateSelected(new OnParseResultListener() {
                     @Override
@@ -43,7 +44,8 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver {
                         Log.d("CurrencyUpdateReceiver", "onError");
                     }
                 });
-            } else {
+            }
+            else {
                 CurrencyUpdateTask.updateAll(new OnParseResultListener() {
                     @Override
                     public void onParseSuccessful() {
@@ -58,7 +60,9 @@ public class CurrencyUpdateReceiver extends BroadcastReceiver {
                     }
                 });
             }
-        else
+        }
+        else {
             Log.d("CurrencyUpdateReceiver", "Not connected to the network");
+        }
     }
 }

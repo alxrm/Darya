@@ -27,7 +27,7 @@ public class SQLQueryBuilder {
     //endregion
 
     //region SQL keywords
-    public static final String ALL = " * ";
+    public static final String ALL = "*";
     private static final String SPACE = " ";
     private static final String SELECT = " SELECT ";
     private static final String FROM = " FROM ";
@@ -60,16 +60,14 @@ public class SQLQueryBuilder {
     }
 
     public SQLQueryBuilder integerClause(String column, String operators, int operand) {
-        sBuilder.append(SPACE)
-                .append(column)
+        sBuilder.append(column)
                 .append(operators)
                 .append(operand);
         return this;
     }
 
     public SQLQueryBuilder stringClause(String column, String operators, String operand) {
-        sBuilder.append(SPACE)
-                .append(column)
+        sBuilder.append(column)
                 .append(operators)
                 .append(STRING_START)
                 .append(operand)
@@ -88,6 +86,35 @@ public class SQLQueryBuilder {
     }
 
     public String build() {
-        return sBuilder.toString().trim();
+//        String query = sBuilder.toString().trim().replace(" +", SPACE);
+//        isValidQuery(query);
+
+        return sBuilder.toString().trim().replace(" +", SPACE);
     }
+
+//    private boolean isValidQuery(String query) {
+//        boolean isValid = true;
+//        String[] words = query.split(SPACE);
+//        Log.d("SQLQueryBuilder", "isValidQuery - query: "
+//                + query);
+//        for (int i = 0; i < words.length; i++) {
+//            if (i == 0) {
+//                isValid &= words[i].equals(SELECT);
+//                Log.d("SQLQueryBuilder", "i = 0: " + words[i]);
+//            }
+//            else if (i == 2) {
+//                isValid &= words[i].equals(FROM);
+//                Log.d("SQLQueryBuilder", "i = 2: " + words[i]);
+//            }
+//            else if (i == 4) {
+//                isValid &= words[i].equals(WHERE);
+//                Log.d("SQLQueryBuilder", "i = 4: " + words[i]);
+//            }
+//            else if (i % 4 == 0) {
+//                isValid &= words[i].equals(AND) || words[i].equals(OR);
+//                Log.d("SQLQueryBuilder", "i is even: " + words[i]);
+//            }
+//        }
+//        return isValid;
+//    }
 }
