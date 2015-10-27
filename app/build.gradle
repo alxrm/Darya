@@ -7,8 +7,8 @@ android {
         applicationId "com.rm.darya"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 4
-        versionName "1.3.5"
+        versionCode 7
+        versionName "1.3.6"
     }
     buildTypes {
         release {
