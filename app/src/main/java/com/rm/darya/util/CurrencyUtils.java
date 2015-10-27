@@ -33,7 +33,8 @@ public class CurrencyUtils {
     }
 
     public static ArrayList<Currency> findCurrencies(String query) {
-        return DaryaDatabaseHelper.findCurrencies(app(), query);
+        String filtered =  query.replace("\"", "");
+        return DaryaDatabaseHelper.findCurrencies(app(), filtered);
     }
 
     public static class Parser {

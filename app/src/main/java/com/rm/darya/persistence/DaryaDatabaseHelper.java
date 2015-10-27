@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static com.rm.darya.Darya.app;
 import static com.rm.darya.persistence.CurrencyTable.COLUMN_CODE;
@@ -101,8 +100,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
             final Currency currency = getCurrency(data);
             tmpCurrencies.add(currency);
         } while (data.moveToNext());
-
-        Collections.sort(tmpCurrencies);
+        
         return tmpCurrencies;
     }
 
@@ -130,6 +128,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
                 .stringClause(COLUMN_NAME, LIKE, searchQuery)
                 .or()
                 .stringClause(COLUMN_CODE, LIKE, searchQuery)
+                .orderBy(new String[]{ COLUMN_NAME, COLUMN_CODE })
                 .build();
         Cursor data = readableDatabase.rawQuery(selectQuery, null);
         data.moveToFirst();
@@ -143,6 +142,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
                 .from(TABLE_NAME)
                 .where()
                 .integerClause(COLUMN_SELECTED, EQUALS, 1)
+                .orderBy(new String[]{COLUMN_NAME, COLUMN_CODE})
                 .build();
         Cursor data = readableDatabase.rawQuery(selectQuery, null);
         data.moveToFirst();
@@ -154,6 +154,7 @@ public class DaryaDatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = SQLQueryBuilder.getInstance()
                 .select(ALL)
                 .from(TABLE_NAME)
+                .orderBy(new String[]{ COLUMN_NAME, COLUMN_CODE })
                 .build();
         Cursor data = readableDatabase.rawQuery(selectQuery, null);
         data.moveToFirst();
